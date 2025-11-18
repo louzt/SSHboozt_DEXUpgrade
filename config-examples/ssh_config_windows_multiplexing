@@ -1,0 +1,117 @@
+# ================================================================
+# SSH Configuration Example - Windows with Multiplexing
+# ================================================================
+# WARNING: Multiplexing on Windows OpenSSH is EXPERIMENTAL
+# Frequent errors: "getsockname failed: Bad file descriptor"
+# 
+# Use this config ONLY for testing. For production, use:
+# - ssh_config_windows_no_multiplexing (recommended)
+# - Modern SSH client (WezTerm, Tabby, WindTerm)
+#
+# Learn more: https://github.com/louzt/SSHboozt_DEXUpgrade
+# ================================================================
+
+# ================================================================
+# HOST-SPECIFIC CONFIGURATIONS
+# ================================================================
+
+# Example VPS with full optimizations
+Host my-vps vps.example.com
+    HostName vps.example.com
+    User root
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+    
+    # Multiplexing (EXPERIMENTAL on Windows)
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%h-%p-%r
+    ControlPersist 10m
+    
+    # Compression
+    Compression yes
+    
+    # Keepalive
+    ServerAliveInterval 15
+    ServerAliveCountMax 4
+    TCPKeepAlive yes
+    
+    # SOCKS5 Proxy (local port 9998)
+    DynamicForward 127.0.0.1:9998
+    
+    # Modern ciphers and MACs
+    Ciphers chacha20-poly1305@openssh.com,aes128-gcm@openssh.com,aes256-gcm@openssh.com
+    MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com
+    KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+
+# Example: GitHub with optimizations
+Host github github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    
+    # Multiplexing for faster git operations
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%h-%p-%r
+    ControlPersist 5m
+    
+    # GitHub-specific
+    Compression yes
+    StrictHostKeyChecking accept-new
+
+# Example: Internal server (no multiplexing)
+Host internal-server
+    HostName 192.168.1.100
+    User admin
+    Port 2222
+    IdentityFile ~/.ssh/id_rsa_internal
+    
+    # Disable multiplexing for stability
+    ControlMaster no
+    ControlPath none
+
+# ================================================================
+# GLOBAL DEFAULTS (apply to all hosts)
+# ================================================================
+
+Host *
+    # Connection timeouts
+    ConnectTimeout 30
+    ConnectionAttempts 3
+    
+    # Security
+    IdentitiesOnly yes
+    PasswordAuthentication yes
+    PubkeyAuthentication yes
+    
+    # Logging
+    LogLevel INFO
+    
+    # Host key verification
+    StrictHostKeyChecking ask
+    HashKnownHosts no
+    
+    # Tunnel failure handling
+    ExitOnForwardFailure no
+
+# ================================================================
+# NOTES
+# ================================================================
+#
+# CREATE SOCKETS DIRECTORY:
+#   New-Item -ItemType Directory -Force -Path ~/.ssh/sockets
+#
+# TEST MULTIPLEXING:
+#   ssh my-vps "echo 'First connection'"
+#   ssh -O check my-vps
+#   ssh my-vps "echo 'Second connection (should be faster)'"
+#
+# STOP MASTER:
+#   ssh -O stop my-vps
+#
+# CLEAN STUCK SOCKETS:
+#   Remove-Item ~/.ssh/sockets/* -Force
+#
+# DISABLE MULTIPLEXING FOR SINGLE CONNECTION:
+#   ssh -o ControlMaster=no -o ControlPath=none my-vps
+#
+# ================================================================

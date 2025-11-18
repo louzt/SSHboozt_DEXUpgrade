@@ -1,0 +1,179 @@
+# SSHboozt DEX Upgrade - System Requirements
+# ==========================================
+
+# Core Dependencies (Required)
+# ------------------------------
+
+# OpenSSH Client
+# - Windows: OpenSSH_for_Windows_9.0+ (built-in on Windows 10 1809+)
+# - Linux/macOS: openssh-client 8.0+
+# Version check: ssh -V
+
+# Git (for cloning repository)
+# - Windows: Git for Windows 2.30+
+# - Linux: git 2.20+
+# Version check: git --version
+
+
+# Optional Dependencies (Recommended)
+# ------------------------------------
+
+# Python 3.8+ (for potential automation scripts)
+# - Only needed if using Python-based SSH management tools
+# Version check: python --version
+
+# rsync (for fast file synchronization)
+# - Linux: rsync 3.0+
+# - Windows: Install via Cygwin, WSL, or cwRsync
+# Version check: rsync --version
+
+# netcat (for connection testing)
+# - Linux: netcat-openbsd or nmap-netcat
+# - Windows: Available in Git Bash or WSL
+# Version check: nc -h
+
+
+# Development Tools Integration
+# ------------------------------
+
+# VS Code (for Remote-SSH development)
+# - Version: 1.70+
+# - Extension: Remote - SSH (ms-vscode-remote.remote-ssh)
+# Installation: code --install-extension ms-vscode-remote.remote-ssh
+
+# Docker (for remote container management)
+# - Docker Desktop 20.10+ (Windows/macOS)
+# - Docker Engine 20.10+ (Linux)
+# Version check: docker version
+
+# kubectl (for Kubernetes remote clusters)
+# - Version: 1.25+
+# Version check: kubectl version --client
+
+
+# Modern SSH Clients (Alternatives to OpenSSH)
+# --------------------------------------------
+
+# WezTerm (HIGHLY RECOMMENDED for Windows users)
+# - Version: 20230712-072601+
+# - Native multiplexing, no Windows OpenSSH bugs
+# - Installation: winget install wez.wezterm
+# - Homepage: https://wezfurlong.org/wezterm/
+
+# Tabby (formerly Terminus)
+# - Version: 1.0.200+
+# - Cross-platform, built-in SSH
+# - Installation: winget install Eugeny.Tabby
+# - Homepage: https://tabby.sh/
+
+# WindTerm
+# - Version: 2.6.0+
+# - Fast, lightweight
+# - Homepage: https://github.com/kingToolbox/WindTerm
+
+
+# Platform-Specific Requirements
+# --------------------------------
+
+# Windows 10/11
+# - Build 1809+ (for built-in OpenSSH)
+# - PowerShell 5.1+ or PowerShell Core 7+
+# - Administrator privileges (for installer)
+# - .NET Framework 4.8+ (for some SSH tools)
+
+# WSL2 (Windows Subsystem for Linux)
+# - Windows 10 Build 19041+ or Windows 11
+# - WSL2 enabled (wsl --set-default-version 2)
+# - Ubuntu 20.04+ / Debian 11+ recommended
+# - systemd enabled (optional, for SSH agent)
+
+# Linux
+# - Kernel 4.15+ (for modern cryptography support)
+# - glibc 2.27+ or musl 1.2+
+# - systemd (optional, for SSH agent management)
+
+# macOS
+# - macOS 11 (Big Sur) or later
+# - Xcode Command Line Tools (for git, ssh)
+
+
+# Network Requirements
+# --------------------
+
+# Firewall Rules
+# - Outbound TCP port 22 (SSH)
+# - Outbound TCP/UDP ports 53 (DNS)
+# - Optional: SOCKS5 proxy port (9998 by default)
+
+# Bandwidth
+# - Minimum: 1 Mbps (for basic SSH)
+# - Recommended: 5+ Mbps (for VS Code Remote + file sync)
+
+# Latency
+# - Works with any latency
+# - <100ms: Excellent experience
+# - 100-300ms: Good (multiplexing helps significantly)
+# - >300ms: Usable (compression + multiplexing essential)
+
+
+# Security Requirements
+# ---------------------
+
+# SSH Keys
+# - Ed25519 (recommended): ssh-keygen -t ed25519 -C "your@email.com"
+# - RSA 4096-bit (fallback): ssh-keygen -t rsa -b 4096 -C "your@email.com"
+# - Avoid: DSA, ECDSA, RSA <2048-bit
+
+# Permissions
+# - ~/.ssh directory: 700 (drwx------)
+# - ~/.ssh/config file: 600 (-rw-------)
+# - Private keys: 600 (-rw-------)
+# - Public keys: 644 (-rw-r--r--)
+
+
+# Tested Configurations
+# ----------------------
+
+# Windows 11 Pro Build 22631
+# - OpenSSH_for_Windows_9.5p1, LibreSSL 3.8.2
+# - PowerShell 7.4.6
+# - WezTerm 20240203-110809-5046fc22
+# - VS Code 1.96.0 with Remote-SSH 0.115.1
+# - Result: All optimizations working ✅
+
+# Windows 10 Pro Build 19045
+# - OpenSSH_for_Windows_8.6p1
+# - PowerShell 5.1.19041
+# - Result: No multiplexing, other optimizations working ✅
+
+# WSL2 Ubuntu 24.04 LTS
+# - OpenSSH_9.6p1 Ubuntu-3ubuntu13
+# - systemd enabled
+# - Result: Full multiplexing + all optimizations ✅
+
+# Ubuntu 24.04 LTS (Native)
+# - OpenSSH_9.6p1 Ubuntu-3ubuntu13
+# - Result: Full multiplexing + all optimizations ✅
+
+# Debian 12 (Bookworm)
+# - OpenSSH_9.2p1 Debian-2+deb12u3
+# - Result: Full multiplexing + all optimizations ✅
+
+# macOS 14 Sonoma
+# - OpenSSH_9.4p1
+# - Result: Full multiplexing + all optimizations ✅
+
+
+# Incompatible / Not Supported
+# -----------------------------
+
+# Windows 7/8/8.1 (End of Life)
+# - Use WezTerm or PuTTY instead
+
+# OpenSSH <7.0 (very old)
+# - Upgrade to OpenSSH 8.0+ or use modern SSH client
+
+# Git Bash on Windows (partial support)
+# - Multiplexing unstable
+# - Other optimizations work ✅
+# - Recommendation: Use WSL2 or WezTerm instead

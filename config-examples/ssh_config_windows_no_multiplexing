@@ -1,0 +1,142 @@
+# ================================================================
+# SSH Configuration Example - Windows without Multiplexing (RECOMMENDED)
+# ================================================================
+# This config provides optimizations WITHOUT multiplexing.
+# Best for: Production, stability-critical environments, Windows users
+#
+# Multiplexing on Windows OpenSSH is unstable. Use modern clients instead:
+# - WezTerm (recommended, open source, stable multiplexing)
+# - Tabby (modern UI, built-in multiplexing)
+# - WindTerm (fast, stable)
+#
+# Learn more: https://github.com/louzt/SSHboozt_DEXUpgrade
+# ================================================================
+
+# ================================================================
+# HOST-SPECIFIC CONFIGURATIONS
+# ================================================================
+
+# Example VPS with optimizations (NO multiplexing)
+Host my-vps vps.example.com
+    HostName vps.example.com
+    User root
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+    
+    # NO multiplexing (stable on Windows)
+    ControlMaster no
+    ControlPath none
+    
+    # Compression
+    Compression yes
+    
+    # Keepalive (prevent timeouts)
+    ServerAliveInterval 15
+    ServerAliveCountMax 4
+    TCPKeepAlive yes
+    
+    # SOCKS5 Proxy (local port 9998)
+    DynamicForward 127.0.0.1:9998
+    
+    # Modern ciphers (fast and secure)
+    Ciphers chacha20-poly1305@openssh.com,aes128-gcm@openssh.com,aes256-gcm@openssh.com
+    MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com
+    KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+
+# Example: GitHub (optimized for git operations)
+Host github github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    
+    # No multiplexing
+    ControlMaster no
+    ControlPath none
+    
+    # GitHub-specific
+    Compression yes
+    StrictHostKeyChecking accept-new
+    
+    # Faster git operations
+    ServerAliveInterval 30
+    ServerAliveCountMax 2
+
+# Example: Internal server
+Host internal-server
+    HostName 192.168.1.100
+    User admin
+    Port 2222
+    IdentityFile ~/.ssh/id_rsa_internal
+    
+    # No multiplexing
+    ControlMaster no
+    ControlPath none
+    
+    # Local network, no compression needed
+    Compression no
+
+# Example: Multiple hosts pattern (development servers)
+Host dev-*.company.local
+    User developer
+    IdentityFile ~/.ssh/id_rsa_dev
+    
+    # No multiplexing
+    ControlMaster no
+    ControlPath none
+    
+    # Optimizations
+    Compression yes
+    ServerAliveInterval 20
+    ServerAliveCountMax 3
+
+# ================================================================
+# GLOBAL DEFAULTS (apply to all hosts)
+# ================================================================
+
+Host *
+    # Connection timeouts
+    ConnectTimeout 30
+    ConnectionAttempts 3
+    
+    # Security
+    IdentitiesOnly yes
+    PasswordAuthentication yes
+    PubkeyAuthentication yes
+    
+    # Logging
+    LogLevel INFO
+    
+    # Host key verification
+    StrictHostKeyChecking ask
+    HashKnownHosts no
+    
+    # Tunnel failure handling
+    ExitOnForwardFailure no
+    
+    # IMPORTANT: Disable multiplexing globally
+    ControlMaster no
+    ControlPath none
+
+# ================================================================
+# NOTES
+# ================================================================
+#
+# INSTALL CONFIG:
+#   Copy-Item ssh_config_windows_no_multiplexing ~/.ssh/config
+#
+# TEST CONNECTION:
+#   ssh my-vps "echo 'Connection OK'"
+#
+# TEST SOCKS PROXY:
+#   curl --socks5 127.0.0.1:9998 https://ifconfig.me
+#
+# VERIFY CONFIG:
+#   ssh -G my-vps | grep -i control
+#   # Should show: controlmaster no, controlpath none
+#
+# WANT MULTIPLEXING?
+#   Use WezTerm: https://wezfurlong.org/wezterm/
+#   Or Tabby: https://tabby.sh/
+#   Or WindTerm: https://github.com/kingToolbox/WindTerm
+#
+# ================================================================
